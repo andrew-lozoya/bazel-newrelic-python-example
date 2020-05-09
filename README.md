@@ -8,7 +8,7 @@ To build this example, you will need to [install Bazel](http://bazel.io/docs/ins
 
 This application demonstrates the usage of [`rules_python`](https://github.com/bazelbuild/rules_python/) to configure dependencies. The dependencies are configured in the `WORKSPACE` file.
 
-The [`py_binary`](https://docs.bazel.build/versions/master/be/python.html#py_binary) rule then creates an executable Python program consisting of a collection of .py source files (possibly belonging to other py_library rules), a *.runfiles directory tree containing all the code and data needed by the program at run-time, and a stub script that starts up the program with the correct initial environment and data.
+The [`py_binary`](https://docs.bazel.build/versions/master/be/python.html#py_binary) rule then creates an executable Python program consisting of a collection of `.py` source files (possibly belonging to other py_library rules), a `*.runfiles` directory tree containing all the code and data needed by the program at run-time, and a stub script that starts up the program with the correct initial environment and data.
 
 The example code already assumes you've set the following [`NEW_RELIC_LICENSE_KEY`](https://docs.newrelic.com/docs/accounts/install-new-relic/account-setup/license-key) environ:
 
