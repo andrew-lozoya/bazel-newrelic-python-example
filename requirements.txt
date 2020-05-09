@@ -1,0 +1,5 @@
+newrelic>=5.12.1.141
+flask
+Werkzeug
+Jinja2
+itsdangerous
