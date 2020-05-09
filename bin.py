@@ -19,9 +19,6 @@ import lib
 
 
 def version():
-    """
-  Check and show the Python runtime we claim is actual Python runtime
-  """
     python_version = lib.python_version()
     print("******************************************************")
     print("* The system-wide Python version running is : %s *" % python_version)
@@ -46,7 +43,7 @@ def hello_name(name):
 if __name__ == "__main__":
 
     if "NEW_RELIC_LICENSE_KEY" in os.environ:
-        print("Your New Relic license key is: " + license_key + "\n")
+        print("Your New relic license key is: " + license_key + "\n")
         version()
         app.run(host="0.0.0.0", port=8080)
     else:
