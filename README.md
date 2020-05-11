@@ -39,23 +39,31 @@ Your New Relic license key is: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
  * Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
 ```
 
-To generate load to the web server application:
+Generate some load to the web server:
 ``` shell
 curl --request GET --url http://localhost:8080/andrewlozoya
 
 127.0.0.1 - - [08/May/2020 21:47:01] "GET /andrewlozoya HTTP/1.1" 200 -
 ```
+In as little as a minute, your application will batch send data to New Relic and you'll be able to start monitoring your application's performance.
 
 # New Relic Instrumentation
 
 Since we can not use the recommend `newrelic-admin` wrapper script in Bazel builds. We must import a Python agent package into your app and make a call to [`initialize`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api/initialize) the agent. This call modifies your app's import mechanism so that when libraries are imported, the New Relic agent listens for the function classes it recognizes.
 
-Once [`initialize`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api/initialize) is called, it sets up the Python agent but does not register the agent with the collector. The [`register_application`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api/register_application) call will then register the agent with the New Relic collector.
+Once [`initialize`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api/initialize) is called, it sets up the Python agent to be being manually integrated with a Python application.
 
-Keep in mind unlike standard Python functionality, the import order matters! The New Relic package MUST be imported at the earliest. 
+Keep in mind unlike standard Python functionality, the import order matters! The New Relic package MUST be imported at the earliest for best results. For WSGI and application script files, place the initialize call before all imports, with the exception of the sys import and updates to the sys.path. If you call initialize multiple times, the agent ignores calls after the first if the configuration file and environment options are the same.
+
+For web transactions, the agent normally registers automatically when the first web request or background task occurs of a known framework. Because server-side registration can take upto a second or two, details are usually lost from the earliest transactions.
+
+This can be avoided by forcing registration with [`register_application`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api/register_application) API, though doing so means your app may wait for registration to complete before serving any web requests or running background tasks. This API should be noted for all ephemera type appliction use-cases.
 
 ```python
 import newrelic.agent
+
+newrelic.agent.initialize()
+
 settings = newrelic.agent.global_settings()
 settings.license_key = 'NEWRELIC_LICENSE_KEY'
 settings.app_name = 'BazelExample'
@@ -63,12 +71,26 @@ settings.log_file = './newrelic-python-agent.log'
 settings.log_level = 'INFO'
 settings.distributed_tracing.enabled = True
 settings.browser_monitoring.auto_instrument = True
+... YOUR_OTHER_IMPORTS
 
-newrelic.agent.initialize()
-newrelic.agent.register_application()
+if __name__ == "__main__":
+    newrelic.agent.register_application()
+    dostuff()
 ```
 
-New Relic for Python lets you futher change the default behavior of the New Relic Python agent using addtional  [configuration options](https://docs.newrelic.com/docs/agents/python-agent/configuration/python-agent-configuration#environment-variables).
+# Unsupported or Non-Web frameworks
+When working with unsupported or non-web background applications its best to use [`register_application`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api/register_application) call to immediately register the  the agent with the New Relic collector.
+
+Do not call register_application with a non-zero timeout when the Python global import lock will be held. In other words, do not call it in a module file at global scope while the module is being imported. Doing so may result in a temporary deadlock with the background thread created by this call (the deadlock will not be broken until the timeout expires).
+
+For Gunicorn: The deadlock issue just described can also occur when using Gunicorn. The problem is that triggering register_application from the WSGI module is not safe, because it preloads the module into the parent process. To use register_application with Gunicorn (with or without a timeout) call it from a post_fork() callback. This is not a problem with Apache/mod_wsgi, since those tools have been designed not to do this, so it is safe to create background threads when the WSGI application is loaded.
+
+Please refer to the [`New Relic Python API`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api) for more New Relic Python API best practices.
+
+# Agent Configurations
+New Relic for Python lets you futher change the default behavior of the New Relic Python agent using addtional  [configuration options](https://docs.newrelic.com/docs/agents/python-agent/configuration/python-agent-configuration#environment-variables). If you call [`initialize`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api/initialize) with no arguments, like in this example the agent will assume you have already specified your license key with the NEW_RELIC_LICENSE_KEY environment variable.
+
+The [`global_settings`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api/global_settings) must accessed **after** the agent is initialized, along with any overrides from user environment variables.
 
 | Environment variable | Configuration setting |
 | ------ | ------ |
