@@ -4,6 +4,8 @@ license_key = os.environ.get("NEW_RELIC_LICENSE_KEY")
 
 import newrelic.agent
 
+newrelic.agent.initialize()
+
 settings = newrelic.agent.global_settings()
 settings.license_key = license_key
 settings.app_name = "BazelExample"
@@ -11,8 +13,6 @@ settings.log_file = "./newrelic-python-agent.log"
 settings.log_level = "INFO"
 settings.distributed_tracing.enabled = True
 settings.browser_monitoring.auto_instrument = True
-
-newrelic.agent.initialize()
 
 import lib
 
@@ -43,6 +43,7 @@ if __name__ == "__main__":
 
     if "NEW_RELIC_LICENSE_KEY" in os.environ:
         print("Your New Relic license key is: " + license_key + "\n")
+        newrelic.agent.register_application()
         version()
         app.run(host="0.0.0.0", port=8080)
     else:
