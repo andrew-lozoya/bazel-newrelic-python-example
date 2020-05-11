@@ -13,7 +13,6 @@ settings.distributed_tracing.enabled = True
 settings.browser_monitoring.auto_instrument = True
 
 newrelic.agent.initialize()
-newrelic.agent.register_application()
 
 import lib
 
@@ -43,7 +42,7 @@ def hello_name(name):
 if __name__ == "__main__":
 
     if "NEW_RELIC_LICENSE_KEY" in os.environ:
-        print("Your New relic license key is: " + license_key + "\n")
+        print("Your New Relic license key is: " + license_key + "\n")
         version()
         app.run(host="0.0.0.0", port=8080)
     else:
