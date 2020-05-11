@@ -52,7 +52,7 @@ Since we can not use the recommend `newrelic-admin` wrapper script in Bazel buil
 
 Once [`initialize`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api/initialize) is called, it sets up the Python agent but does not register the agent with the collector. The [`register_application`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api/register_application) call will then register the agent with the New Relic collector.
 
-Keep in mind unlike standard Python functionality, the import order matters! the New Relic package MUST be imported at the earliest. 
+Keep in mind unlike standard Python functionality, the import order matters! The New Relic package MUST be imported at the earliest. 
 
 ```python
 import newrelic.agent
