@@ -81,7 +81,7 @@ if __name__ == "__main__":
 # Unsupported or Non-Web frameworks
 When working with unsupported or non-web background applications its best to use [`register_application`](https://docs.newrelic.com/docs/agents/python-agent/python-agent-api/register_application) call to immediately register the  the agent with the New Relic collector.
 
-Do not call register_application with a non-zero timeout when the Python global import lock will be held. In other words, do not call it in a module file at global scope while the module is being imported. Doing so may result in a temporary deadlock with the background thread created by this call (the deadlock will not be broken until the timeout expires).
+Do not call `register_application` with a non-zero timeout when the Python global import lock will be held. In other words, do not call it in a module file at global scope while the module is being imported. Doing so may result in a temporary deadlock with the background thread created by this call (the deadlock will not be broken until the timeout expires).
 
 For Gunicorn: The deadlock issue just described can also occur when using Gunicorn. The problem is that triggering `register_application` from the WSGI module is not safe, because it preloads the module into the parent process. To use `register_application` with Gunicorn (with or without a timeout) call it from a `post_fork()` callback. This is not a problem with Apache/mod_wsgi, since those tools have been designed not to do this, so it is safe to create background threads when the WSGI application is loaded.
 
