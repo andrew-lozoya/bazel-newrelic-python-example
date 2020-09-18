@@ -22,6 +22,7 @@ py_library(
         requirement('flask'),
         requirement('Werkzeug'),
         requirement('itsdangerous'),
+        requirement('MarkupSafe'),
         requirement('Jinja2'),
     ],
 )

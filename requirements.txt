@@ -1,5 +1,6 @@
-newrelic>=5.12.1.141
+newrelic>=5.18.0.148
 flask
 Werkzeug
+MarkupSafe
 Jinja2
 itsdangerous
