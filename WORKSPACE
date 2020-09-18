@@ -4,8 +4,8 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "bazel_federation",
-    url = "https://github.com/bazelbuild/bazel-federation/releases/download/0.0.1/bazel_federation-0.0.1.tar.gz",
-    sha256 = "506dfbfd74ade486ac077113f48d16835fdf6e343e1d4741552b450cfc2efb53",
+    url = "https://github.com/bazelbuild/bazel-federation/releases/download/0.0.2/bazel_federation-0.0.2.tar.gz",
+    sha256 = "b10529fcf8a464591e845588348533981e948315b706183481e0d076afe2fa3c",
 )
 
 load("@bazel_federation//:repositories.bzl",
